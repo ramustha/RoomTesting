@@ -1,0 +1,4 @@
+<resources>
+  <string name="app_name">RoomTesting</string>
+  <string name="loading_users">Loading users...</string>
+</resources>
