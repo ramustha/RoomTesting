@@ -13,7 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.ramusthastudio.roomtesting.model.User;
+import com.ramusthastudio.roomtesting.viewmodel.Injection;
 import com.ramusthastudio.roomtesting.viewmodel.UserListViewModel;
+import com.ramusthastudio.roomtesting.viewmodel.ViewModelFactory;
 
 public class RecyclerListFragment extends Fragment implements RecyclerClickCallback {
   public static final String TAG = "UserListFragment";
@@ -40,7 +42,8 @@ public class RecyclerListFragment extends Fragment implements RecyclerClickCallb
   public void onActivityCreated(@Nullable final Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
 
-    final UserListViewModel viewModel = ViewModelProviders.of(this).get(UserListViewModel.class);
+    final ViewModelFactory viewModelFactory = Injection.provideViewModelFactory(getActivity().getApplication());
+    final UserListViewModel viewModel = ViewModelProviders.of(this, viewModelFactory).get(UserListViewModel.class);
     subscribeUi(viewModel);
   }
 

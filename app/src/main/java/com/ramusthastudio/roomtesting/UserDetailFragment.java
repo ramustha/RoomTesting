@@ -1,5 +1,6 @@
 package com.ramusthastudio.roomtesting;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -9,7 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.ramusthastudio.roomtesting.model.User;
+import com.ramusthastudio.roomtesting.viewmodel.Injection;
 import com.ramusthastudio.roomtesting.viewmodel.UserDetailViewModel;
+import com.ramusthastudio.roomtesting.viewmodel.ViewModelFactory;
 
 public class UserDetailFragment extends Fragment {
   public static final String TAG = "UserDetailFragment";
@@ -30,15 +34,13 @@ public class UserDetailFragment extends Fragment {
   public void onActivityCreated(@Nullable final Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
 
-    final ViewModelProvider.Factory factory = UserDetailViewModel
-        .createFactory(getActivity().getApplication(), getArguments().getInt(KEY_USER_ID));
-
-    final UserDetailViewModel viewModel = ViewModelProviders.of(this, factory).get(UserDetailViewModel.class);
-    subscribeUi(viewModel);
+    final ViewModelFactory viewModelFactory = Injection.provideViewModelFactory(getActivity().getApplication());
+    final UserDetailViewModel viewModel = ViewModelProviders.of(this, viewModelFactory).get(UserDetailViewModel.class);
+    subscribeUi(viewModel.loadAllById(getArguments().getInt(KEY_USER_ID)));
   }
 
-  private void subscribeUi(final UserDetailViewModel aViewModel) {
-    aViewModel.getObserverUser().observe(this, aUsers -> {
+  private void subscribeUi(final LiveData<User> aUserLiveData) {
+    aUserLiveData.observe(this, aUsers -> {
       if (aUsers != null) {
         fFirstName.setText(aUsers.getFirstName());
         fLastName.setText(aUsers.getLastName());
